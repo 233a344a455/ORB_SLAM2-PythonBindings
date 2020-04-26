@@ -37,7 +37,12 @@ public:
     void setMode(ORB_SLAM2::System::eSensor mode);
     void setRGBMode(bool rgb);
     void setUseViewer(bool useViewer);
-    
+    void activate_localisation_only();
+	void deactivate_localisation_only();
+
+    cv::Mat current_pose;
+    cv::Mat get_current_pose();
+
     static bool saveSettingsFile(boost::python::dict settings, std::string settingsFilename);
     static boost::python::dict loadSettingsFile(std::string settingsFilename);
     

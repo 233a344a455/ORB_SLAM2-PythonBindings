@@ -51,6 +51,9 @@ BOOST_PYTHON_MODULE(orbslam2)
         .def("reset", &ORBSlamPython::reset)
         .def("set_mode", &ORBSlamPython::setMode)
         .def("set_use_viewer", &ORBSlamPython::setUseViewer)
+        .def("activate_localisation_only", &ORBSlamPython::activate_localisation_only)
+        .def("deactivate_localisation_only", &ORBSlamPython::deactivate_localisation_only)
+        .def("get_current_pose", &ORBSlamPython::get_current_pose)
         .def("get_keyframe_points", &ORBSlamPython::getKeyframePoints)
         .def("get_trajectory_points", &ORBSlamPython::getTrajectoryPoints)
         .def("get_tracked_mappoints", &ORBSlamPython::getTrackedMappoints)
@@ -93,7 +96,7 @@ ORBSlamPython::~ORBSlamPython()
 
 bool ORBSlamPython::initialize()
 {
-    system = std::make_shared<ORB_SLAM2::System>(vocabluaryFile, settingsFile, sensorMode, bUseViewer);
+    system = std::make_shared<ORB_SLAM2::System>(vocabluaryFile, settingsFile, sensorMode, bUseViewer, 1);
     return true;
 }
 
@@ -133,6 +136,7 @@ bool ORBSlamPython::processMono(cv::Mat image, double timestamp)
     if (image.data)
     {
         cv::Mat pose = system->TrackMonocular(image, timestamp);
+        this->current_pose = pose.clone();
         return !pose.empty();
     }
     else
@@ -470,6 +474,18 @@ bool ORBSlamPython::saveSettingsFile(boost::python::dict settings, std::string s
     }
     
     return true;
+}
+
+void ORBSlamPython::activate_localisation_only(){
+    this->system->ActivateLocalizationMode();
+}
+
+void ORBSlamPython::deactivate_localisation_only(){
+    this->system->DeactivateLocalizationMode();
+}
+
+cv::Mat ORBSlamPython::get_current_pose(){
+return this->current_pose;
 }
 
 // Helpers for reading cv::FileNode objects into python objects.
