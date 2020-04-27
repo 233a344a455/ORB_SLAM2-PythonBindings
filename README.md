@@ -26,6 +26,8 @@ It has been tested on ubuntu 14.04 and 16.04 and built against Python3, although
 - Numpy development headers (to represent images in python, automatically converted to cv::Mat)
 
   Numpy (c++) 库
+ 
+SLAM 前置在win安装可以参考 https://github.com/raulmur/ORB_SLAM2/issues/816
 
 ### Setup
 
