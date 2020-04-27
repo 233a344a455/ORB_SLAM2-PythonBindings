@@ -37,7 +37,7 @@ BOOST_PYTHON_MODULE(orbslam2)
         .value("STEREO", ORB_SLAM2::System::eSensor::STEREO)
         .value("RGBD", ORB_SLAM2::System::eSensor::RGBD);
 
-    boost::python::class_<ORBSlamPython, boost::noncopyable>("System", boost::python::init<const char*, const char*, boost::python::optional<ORB_SLAM2::System::eSensor>>())
+    boost::python::class_<ORBSlamPython, boost::noncopyable>("System", boost::python::init<const char *, const char *, boost::python::optional<ORB_SLAM2::System::eSensor>>())
         .def(boost::python::init<std::string, std::string, boost::python::optional<ORB_SLAM2::System::eSensor>>())
         .def("initialize", &ORBSlamPython::initialize)
         .def("load_and_process_mono", &ORBSlamPython::loadAndProcessMono)
@@ -54,6 +54,8 @@ BOOST_PYTHON_MODULE(orbslam2)
         .def("activate_localisation_only", &ORBSlamPython::activate_localisation_only)
         .def("deactivate_localisation_only", &ORBSlamPython::deactivate_localisation_only)
         .def("get_current_pose", &ORBSlamPython::get_current_pose)
+        .def("get_current_camera_center", &ORBSlamPython::get_current_camera_center)
+        .def("get_current_rotation_inverse", &ORBSlamPython::get_current_rotation_inverse)
         .def("get_keyframe_points", &ORBSlamPython::getKeyframePoints)
         .def("get_trajectory_points", &ORBSlamPython::getTrajectoryPoints)
         .def("get_tracked_mappoints", &ORBSlamPython::getTrackedMappoints)
@@ -486,6 +488,16 @@ void ORBSlamPython::deactivate_localisation_only(){
 
 cv::Mat ORBSlamPython::get_current_pose(){
 return this->current_pose;
+}
+
+cv::Mat ORBSlamPython::get_current_camera_center(){
+    cv::Mat mRcw = (this->current_pose).rowRange(0,3).colRange(0,3);
+    cv::Mat mtcw = (this->current_pose).rowRange(0,3).col(3);
+    return -mRcw.t()*mtcw;
+}
+
+cv::Mat ORBSlamPython::get_current_rotation_inverse(){
+    return (this->current_pose).rowRange(0,3).colRange(0,3).t();
 }
 
 // Helpers for reading cv::FileNode objects into python objects.

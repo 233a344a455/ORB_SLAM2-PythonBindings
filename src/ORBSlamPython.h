@@ -42,6 +42,8 @@ public:
 
     cv::Mat current_pose;
     cv::Mat get_current_pose();
+    cv::Mat get_current_camera_center();
+    cv::Mat get_current_rotation_inverse();
 
     static bool saveSettingsFile(boost::python::dict settings, std::string settingsFilename);
     static boost::python::dict loadSettingsFile(std::string settingsFilename);
